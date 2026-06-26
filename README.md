@@ -48,17 +48,30 @@ Esto iniciará:
 
 ---
 
-### Paso 2: Ejecución de Scripts SQL
-Para cargar y validar el modelo, ejecuta los scripts dentro de tu cliente de base de datos (pgAdmin, DBeaver, psql, etc.) en el siguiente **orden secuencial estricto**:
+### Paso 2: Ejecución y Validación de Scripts SQL
 
-1. **[`sql/00_tabla_cruda.sql`](file:///c:/Users/andre/OneDrive/Desktop/miniProyecto/sql/00_tabla_cruda.sql)**  
-   *Crea la tabla desnormalizada `ventas_crudas` e inserta los datos de prueba iniciales.*
+Para configurar la conexión en **pgAdmin** y ejecutar las consultas de validación en orden, sigue esta guía detallada:
 
-2. **[`sql/01_modelo_normalizado.sql`](file:///c:/Users/andre/OneDrive/Desktop/miniProyecto/sql/01_modelo_normalizado.sql)**  
-   *Crea el esquema `normalizacion_ventas`, define las tablas en 3FN y establece las restricciones primarias, foráneas y validaciones (`CHECK`).*
+#### **Paso A: Registrar el Servidor en pgAdmin**
+1. Abre tu navegador e ingresa a: [http://localhost:5050](http://localhost:5050).
+2. Inicia sesión con el correo `admin@admin.com` y la contraseña `123456`.
+3. En la página de inicio, haz clic en el botón **Add New Server** (o clic derecho en *Servers* -> *Register* -> *Server...*).
+4. En la pestaña **General**, escribe un nombre descriptivo (por ejemplo: `PostgreSQL Local`).
+5. Ve a la pestaña **Connection** e ingresa la siguiente información:
+   * **Host name/address:** `db` (se usa el nombre del servicio Docker para que se comunique internamente).
+   * **Port:** `5432`
+   * **Maintenance database:** `ventas_normalizacion`
+   * **Username:** `postgres`
+   * **Password:** `123456`
+6. Haz clic en **Save**. Ahora verás el servidor disponible en el explorador de objetos de la izquierda.
 
-3. **[`sql/02_datos_normalizados.sql`](file:///c:/Users/andre/OneDrive/Desktop/miniProyecto/sql/02_datos_normalizados.sql)**  
-   *Puebla las tablas normalizadas con los registros mapeados.*
-
-4. **[`sql/03_consultas_validacion.sql`](file:///c:/Users/andre/OneDrive/Desktop/miniProyecto/sql/03_consultas_validacion.sql)**  
-   *Ejecuta las consultas requeridas para reconstruir ventas, validar totales y auditar la integridad referencial.*
+#### **Paso B: Carga y Ejecución en Query Tool**
+Para ejecutar cada script, debes abrir la consola de SQL de pgAdmin:
+1. En el menú izquierdo, navega por el árbol: `Servers` -> `PostgreSQL Local` -> `Databases` -> `ventas_normalizacion`.
+2. Haz clic derecho sobre **`ventas_normalizacion`** y selecciona **Query Tool** (o presiona `Alt + Shift + Q`).
+3. Abre o copia el contenido de los archivos SQL en el orden estricto indicado abajo y presiona el botón **Execute (F5 / botón de rayo)**:
+   
+   1. **[`sql/00_tabla_cruda.sql`](file:///c:/Users/andre/OneDrive/Desktop/miniProyecto/sql/00_tabla_cruda.sql)**: Crea e inserta los datos iniciales de la tabla desnormalizada `ventas_crudas`.
+   2. **[`sql/01_modelo_normalizado.sql`](file:///c:/Users/andre/OneDrive/Desktop/miniProyecto/sql/01_modelo_normalizado.sql)**: Crea las tablas de la 3FN, llaves primarias, foráneas y restricciones.
+   3. **[`sql/02_datos_normalizados.sql`](file:///c:/Users/andre/OneDrive/Desktop/miniProyecto/sql/02_datos_normalizados.sql)**: Puebla las tablas limpias mapeando los datos de `ventas_crudas`.
+   4. **[`sql/03_consultas_validacion.sql`](file:///c:/Users/andre/OneDrive/Desktop/miniProyecto/sql/03_consultas_validacion.sql)**: Ejecuta y valida las consultas requeridas por el proyecto. Verás los resultados en el panel inferior *Data Output*.
