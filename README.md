@@ -39,6 +39,13 @@ Esto iniciará:
 1. **PostgreSQL** en el puerto `5432` (Base de datos: `ventas_normalizacion`, Usuario: `postgres`, Contraseña: `123456`).
 2. **pgAdmin4** en el puerto `5050` (Email: `admin@admin.com`, Contraseña: `123456`).
 
+> [!NOTE]
+> Si anteriormente tenías contenedores creados con otra contraseña y pgAdmin no te permite iniciar sesión, ejecuta el siguiente comando en la carpeta `entorno-postgres/` para limpiar la caché de credenciales de pgAdmin sin perder tus datos de PostgreSQL:
+> ```bash
+> docker compose rm -f -s -v pgadmin
+> docker compose up -d
+> ```
+
 ---
 
 ### Paso 2: Ejecución de Scripts SQL
