@@ -39,10 +39,10 @@ Esto iniciará:
 1. **PostgreSQL** en el puerto `5432` (Base de datos: `ventas_normalizacion`, Usuario: `postgres`, Contraseña: `123456`).
 2. **pgAdmin4** en el puerto `5050` (Email: `admin@admin.com`, Contraseña: `123456`).
 
-> [!NOTE]
-> Si anteriormente tenías contenedores creados con otra contraseña y pgAdmin no te permite iniciar sesión, ejecuta el siguiente comando en la carpeta `entorno-postgres/` para limpiar la caché de credenciales de pgAdmin sin perder tus datos de PostgreSQL:
+> [!IMPORTANT]
+> PostgreSQL solo lee la variable `POSTGRES_PASSWORD` la primera vez que se crea el volumen. Si ya tenías contenedores inicializados anteriormente y deseas cambiar la contraseña de PostgreSQL o pgAdmin a `123456`, debes restablecer por completo los volúmenes ejecutando en la carpeta `entorno-postgres/`:
 > ```bash
-> docker compose rm -f -s -v pgadmin
+> docker compose down -v
 > docker compose up -d
 > ```
 
