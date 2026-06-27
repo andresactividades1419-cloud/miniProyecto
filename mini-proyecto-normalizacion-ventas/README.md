@@ -71,14 +71,14 @@ Para ejecutar los scripts de creación de tablas y carga de datos:
 2. Haz clic derecho sobre **`ventas_normalizacion`** y selecciona **Query Tool** (o presiona `Alt + Shift + Q`).
 3. Abre, copia y ejecuta en orden secuencial estricto los siguientes archivos (presionando el botón de **rayo / Execute** o `F5`):
    
-   * **1. [`sql/00_tabla_cruda.sql`](file:///c:/Users/andre/OneDrive/Desktop/miniProyecto/sql/00_tabla_cruda.sql)**: Crea e inserta los datos crudos originales de la hoja de cálculo.
-   * **2. [`sql/01_modelo_normalizado.sql`](file:///c:/Users/andre/OneDrive/Desktop/miniProyecto/sql/01_modelo_normalizado.sql)**: Elimina y crea la estructura relacional limpia en 3FN (tablas con llaves y restricciones).
-   * **3. [`sql/02_datos_normalizados.sql`](file:///c:/Users/andre/OneDrive/Desktop/miniProyecto/sql/02_datos_normalizados.sql)**: Puebla la base de datos limpia con los registros de prueba mapeados.
+   * **1. [`sql/00_tabla_cruda.sql`](file:///c:/Users/andre/OneDrive/Desktop/miniProyecto/mini-proyecto-normalizacion-ventas/sql/00_tabla_cruda.sql)**: Crea e inserta los datos crudos originales de la hoja de cálculo.
+   * **2. [`sql/01_modelo_normalizado.sql`](file:///c:/Users/andre/OneDrive/Desktop/miniProyecto/mini-proyecto-normalizacion-ventas/sql/01_modelo_normalizado.sql)**: Elimina y crea la estructura relacional limpia en 3FN (tablas con llaves y restricciones).
+   * **3. [`sql/02_datos_normalizados.sql`](file:///c:/Users/andre/OneDrive/Desktop/miniProyecto/mini-proyecto-normalizacion-ventas/sql/02_datos_normalizados.sql)**: Puebla la base de datos limpia con los registros de prueba mapeados.
 
 ---
 
 #### **Paso C: Ejecución Paso a Paso de las Consultas de Validación**
-Una vez pobladas las tablas, puedes abrir y ejecutar el archivo **[`sql/03_consultas_validacion.sql`](file:///c:/Users/andre/OneDrive/Desktop/miniProyecto/sql/03_consultas_validacion.sql)** en el Query Tool, o bien copiar y ejecutar directamente los siguientes bloques completos de consulta uno por uno:
+Una vez pobladas las tablas, puedes abrir y ejecutar el archivo **[`sql/03_consultas_validacion.sql`](file:///c:/Users/andre/OneDrive/Desktop/miniProyecto/mini-proyecto-normalizacion-ventas/sql/03_consultas_validacion.sql)** en el Query Tool, o bien copiar y ejecutar directamente los siguientes bloques completos de consulta uno por uno:
 
 > [!NOTE]
 > Todos los bloques SQL de abajo incluyen la instrucción `SET search_path TO normalizacion_ventas;` para garantizar que pgAdmin sepa en qué esquema trabajar.
