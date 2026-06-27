@@ -78,26 +78,89 @@ Para ejecutar los scripts de creación de tablas y carga de datos:
 ---
 
 #### **Paso C: Ejecución Paso a Paso de las Consultas de Validación**
-Una vez pobladas las tablas, abre el archivo **[`sql/03_consultas_validacion.sql`](file:///c:/Users/andre/OneDrive/Desktop/miniProyecto/sql/03_consultas_validacion.sql)** en el Query Tool. 
+Una vez pobladas las tablas, puedes abrir y ejecutar el archivo **[`sql/03_consultas_validacion.sql`](file:///c:/Users/andre/OneDrive/Desktop/miniProyecto/sql/03_consultas_validacion.sql)** en el Query Tool, o bien copiar y ejecutar directamente los siguientes bloques completos de consulta uno por uno:
 
-Para ejecutar cada consulta de forma independiente en pgAdmin, **sombrea (selecciona con el mouse) únicamente el bloque de la consulta que quieres probar** y presiona **F5** (o el botón de ejecutar). pgAdmin solo ejecutará el texto seleccionado:
+> [!NOTE]
+> Todos los bloques SQL de abajo incluyen la instrucción `SET search_path TO normalizacion_ventas;` para garantizar que pgAdmin sepa en qué esquema trabajar.
 
 * **Consulta 1: Total calculado por cada venta desde el detalle**
-  * *Acción:* Selecciona desde `SELECT` hasta `ORDER BY` en el primer bloque.
-  * *Propósito:* Verifica que la suma de `cantidad * precio_unitario - descuento` por cada venta coincida con los totales de la tabla cruda (por ejemplo, `V1001` debe dar `270000.00`).
-  
+  * *Explicación:* Suma el total neto de los productos de cada venta (`cantidad * precio_unitario - descuento`) agrupándolos por el identificador de venta. Coincide con el total del documento original.
+  * *Código completo a copiar:*
+    ```sql
+    SET search_path TO normalizacion_ventas;
+    
+    SELECT 
+        venta_id,
+        SUM(cantidad * precio_unitario - descuento) AS total_calculado
+    FROM detalle_ventas
+    GROUP BY venta_id
+    ORDER BY venta_id;
+    ```
+
 * **Consulta 2: Productos más vendidos por cantidad total**
-  * *Acción:* Sombrea la segunda consulta SELECT.
-  * *Propósito:* Agrupa y suma la cantidad vendida de cada producto para identificar los más populares.
-  
+  * *Explicación:* Suma las unidades vendidas de cada producto agrupándolas por su código y nombre, ordenándolas de mayor a menor cantidad.
+  * *Código completo a copiar:*
+    ```sql
+    SET search_path TO normalizacion_ventas;
+    
+    SELECT 
+        p.producto_codigo,
+        p.nombre AS producto_nombre,
+        SUM(dv.cantidad) AS unidades_vendidas
+    FROM detalle_ventas dv
+    JOIN productos p ON dv.producto_codigo = p.producto_codigo
+    GROUP BY p.producto_codigo, p.nombre
+    ORDER BY unidades_vendidas DESC;
+    ```
+
 * **Consulta 3: Ventas por vendedor**
-  * *Acción:* Selecciona y ejecuta el tercer bloque de la consulta.
-  * *Propósito:* Muestra la cantidad total de facturas distintas y el valor monetario neto facturado por cada vendedor.
-  
+  * *Explicación:* Muestra la cantidad total de facturas únicas atendidas y el valor acumulado facturado (neto) por cada vendedor.
+  * *Código completo a copiar:*
+    ```sql
+    SET search_path TO normalizacion_ventas;
+    
+    SELECT 
+        v.vendedor_id,
+        v.nombre AS vendedor_nombre,
+        COUNT(DISTINCT ve.venta_id) AS cantidad_ventas,
+        SUM(dv.cantidad * dv.precio_unitario - dv.descuento) AS valor_total
+    FROM vendedores v
+    LEFT JOIN ventas ve ON v.vendedor_id = ve.vendedor_id
+    LEFT JOIN detalle_ventas dv ON ve.venta_id = dv.venta_id
+    GROUP BY v.vendedor_id, v.nombre
+    ORDER BY valor_total DESC;
+    ```
+
 * **Consulta 4: Historial de compras de un cliente específico**
-  * *Acción:* Sombrea la cuarta consulta.
-  * *Propósito:* Filtra y despliega de manera cronológica el desglose de productos comprados por el cliente `CC101` (Maria Gomez). Puedes cambiar el valor `'CC101'` por otro documento de cliente para probar.
-  
+  * *Explicación:* Filtra y despliega de manera cronológica el desglose de productos comprados por un cliente (ej. `CC101` - Maria Gomez).
+  * *Código completo a copiar:*
+    ```sql
+    SET search_path TO normalizacion_ventas;
+    
+    SELECT 
+        c.cliente_doc,
+        c.nombre AS cliente_nombre,
+        v.venta_id,
+        v.fecha_venta,
+        p.nombre AS producto,
+        dv.cantidad
+    FROM clientes c
+    JOIN ventas v ON c.cliente_doc = v.cliente_doc
+    JOIN detalle_ventas dv ON v.venta_id = dv.venta_id
+    JOIN productos p ON dv.producto_codigo = p.producto_codigo
+    WHERE c.cliente_doc = 'CC101'
+    ORDER BY v.fecha_venta, p.nombre;
+    ```
+
 * **Consulta 5: Control de integridad (Auditoría de registros huérfanos)**
-  * *Acción:* Sombrea la quinta y última consulta.
-  * *Propósito:* Realiza un cruce de datos para confirmar que no existen líneas de detalles sin una venta o un producto asociado. El resultado esperado en el contador es **`0`**.
+  * *Explicación:* Realiza un cruce de datos para confirmar que no existen líneas de detalles sin una venta o un producto asociado. El resultado esperado en el contador es **`0`**.
+  * *Código completo a copiar:*
+    ```sql
+    SET search_path TO normalizacion_ventas;
+    
+    SELECT COUNT(*) AS registros_huerfanos
+    FROM detalle_ventas dv
+    LEFT JOIN ventas v ON dv.venta_id = v.venta_id
+    LEFT JOIN productos p ON dv.producto_codigo = p.producto_codigo
+    WHERE v.venta_id IS NULL OR p.producto_codigo IS NULL;
+    ```
